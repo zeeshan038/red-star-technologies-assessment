@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { workspaceSchema } from "../schema/Workspace";
+import { workspaceSchema } from "../schema/Workspace.js";
 
 // Repositories
-import { workspaceRepo } from "../repositories/workspace.repository";
-import { workspaceMemberRepo } from "../repositories/workspaceMember.repository";
-import { userRepo } from "../repositories/user.repository";
+import { workspaceRepo } from "../repositories/workspace.repository.js";
+import { workspaceMemberRepo } from "../repositories/workspaceMember.repository.js";
+import { userRepo } from "../repositories/user.repository.js";
 
 /**
  * @Description Create a new workspace

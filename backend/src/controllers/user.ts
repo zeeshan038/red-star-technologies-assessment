@@ -3,13 +3,13 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 
 //Repositories
-import { userRepo } from "../repositories/user.repository";
+import { userRepo } from "../repositories/user.repository.js";
 
 //Schemas
-import { loginSchemma, userSchema } from "../schema/User";
+import { loginSchemma, userSchema } from "../schema/User.js";
 
 //utils
-import { genrateToken } from "../utils/Methods";
+import { genrateToken } from "../utils/Methods.js";
 
 /**
  * @Description Register a new user

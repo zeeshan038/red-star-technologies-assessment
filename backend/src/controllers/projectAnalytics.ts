@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import { taskRepo } from "../repositories/task.repository";
-import { activityLogRepo } from "../repositories/activityLog.repository";
-import { projectRepo } from "../repositories/project.repository";
-import { ActivityLog } from "../models/activityLogs";
-import { Task } from "../models/task";
-import { User } from "../models/user";
+import { taskRepo } from "../repositories/task.repository.js";
+import { activityLogRepo } from "../repositories/activityLog.repository.js";
+import { projectRepo } from "../repositories/project.repository.js";
+import { ActivityLog } from "../models/activityLogs.js";
+import { Task } from "../models/task.js";
+import { User } from "../models/user.js";
 
 /**
  * @Description Get analytics and overview data for a project

@@ -6,9 +6,9 @@ import {
     getWorkspaceProjects,
     deleteProject,
     getProject
-} from "../controllers/project";
-import { getProjectAnalytics } from "../controllers/projectAnalytics";
-import { verifyUser } from "../middlewares/verifyUser";
+} from "../controllers/project.js";
+import { getProjectAnalytics } from "../controllers/projectAnalytics.js";
+import { verifyUser } from "../middlewares/verifyUser.js";
 
 router.use(verifyUser)
 

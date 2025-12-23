@@ -1,5 +1,5 @@
 
-import { Workspace, WorkspaceCreationAttributes } from "../models/workspace";
+import { Workspace, WorkspaceCreationAttributes } from "../models/workspace.js";
 
 export class WorkspaceRepository {
     async create(data: WorkspaceCreationAttributes) {

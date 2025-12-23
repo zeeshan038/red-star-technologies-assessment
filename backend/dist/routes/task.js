@@ -1,0 +1,12 @@
+import express from "express";
+const router = express.Router();
+import { createTask, getTasks, updateTask, deleteTask, getTaskLogs, toggleTaskStatus } from "../controllers/task.js";
+import { verifyUser } from "../middlewares/verifyUser.js";
+router.use(verifyUser);
+router.post("/create/:projectId", createTask);
+router.get("/all", getTasks);
+router.patch("/:id", updateTask);
+router.delete("/:id", deleteTask);
+router.get("/logs/:id", getTaskLogs);
+router.patch("/status/:id", toggleTaskStatus);
+export default router;

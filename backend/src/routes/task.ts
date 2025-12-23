@@ -8,9 +8,9 @@ import {
     deleteTask,
     getTaskLogs,
     toggleTaskStatus
-} from "../controllers/task";
+} from "../controllers/task.js";
 
-import { verifyUser } from "../middlewares/verifyUser";
+import { verifyUser } from "../middlewares/verifyUser.js";
 
 router.use(verifyUser)
 

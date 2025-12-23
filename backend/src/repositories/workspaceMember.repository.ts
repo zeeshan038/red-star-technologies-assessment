@@ -1,6 +1,6 @@
 
-import { WorkspaceMember, WorkspaceMemberCreationAttributes } from "../models/workspaceMembers";
-import { User } from "../models/user";
+import { WorkspaceMember, WorkspaceMemberCreationAttributes } from "../models/workspaceMembers.js";
+import { User } from "../models/user.js";
 
 export class WorkspaceMemberRepository {
     async create(data: WorkspaceMemberCreationAttributes) {

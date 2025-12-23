@@ -1,5 +1,5 @@
 
-import { Task, TaskCreationAttributes } from "../models/task";
+import { Task, TaskCreationAttributes } from "../models/task.js";
 
 export class TaskRepository {
     async create(data: TaskCreationAttributes) {

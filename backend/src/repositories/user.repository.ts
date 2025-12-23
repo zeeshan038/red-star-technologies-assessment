@@ -1,4 +1,4 @@
-import { User, UserCreationAttributes } from "../models/user";
+import { User, UserCreationAttributes } from "../models/user.js";
 import { Op } from "sequelize";
 
 export class UserRepository {

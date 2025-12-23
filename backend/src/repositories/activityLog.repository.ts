@@ -1,5 +1,5 @@
 
-import { ActivityLog, ActivityLogCreationAttributes } from "../models/activityLogs";
+import { ActivityLog, ActivityLogCreationAttributes } from "../models/activityLogs.js";
 
 export class ActivityLogRepository {
     async create(data: ActivityLogCreationAttributes) {

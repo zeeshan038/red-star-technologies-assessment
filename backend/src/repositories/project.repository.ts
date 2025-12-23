@@ -1,5 +1,5 @@
 
-import { Project, ProjectCreationAttributes } from "../models/projects";
+import { Project, ProjectCreationAttributes } from "../models/projects.js";
 
 export class ProjectRepository {
     async create(data: ProjectCreationAttributes) {

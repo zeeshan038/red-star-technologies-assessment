@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { taskSchema } from "../schema/Task";
+import { taskSchema } from "../schema/Task.js";
 
 // Repositories
-import { taskRepo } from "../repositories/task.repository";
-import { activityLogRepo } from "../repositories/activityLog.repository";
+import { taskRepo } from "../repositories/task.repository.js";
+import { activityLogRepo } from "../repositories/activityLog.repository.js";
 
 
 /**

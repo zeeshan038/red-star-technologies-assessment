@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { activityLogRepo } from "../repositories/activityLog.repository";
+import { activityLogRepo } from "../repositories/activityLog.repository.js";
 
 /**
  * @Description Get all activity logs

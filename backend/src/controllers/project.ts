@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { projectSchema } from "../schema/Project";
-import { projectRepo } from "../repositories/project.repository";
+import { projectSchema } from "../schema/Project.js";
+import { projectRepo } from "../repositories/project.repository.js";
 
 
 /**

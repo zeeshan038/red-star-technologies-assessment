@@ -1,11 +1,11 @@
 import express from "express";
 const router = express.Router();
 
-import user from "./user";
-import workspace from "./workspace";
-import project from './project';
-import task from './task';
-import activityLog from './activityLog';
+import user from "./user.js";
+import workspace from "./workspace.js";
+import project from './project.js';
+import task from './task.js';
+import activityLog from './activityLog.js';
 
 router.use("/user", user);
 router.use("/workspace", workspace);

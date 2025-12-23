@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from "../config/db";
+import { sequelize } from "../config/db.js";
 
 
 export interface WorkspaceMemberAttributes {
@@ -54,6 +54,6 @@ WorkspaceMember.init(
         indexes: [{ unique: true, fields: ["workspace_id", "user_id"] }],
     }
 );
-import { User } from "./user";
+import { User } from "./user.js";
 
 WorkspaceMember.belongsTo(User, { foreignKey: "user_id", as: "user" });

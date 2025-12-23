@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from "../config/db";
+import { sequelize } from "../config/db.js";
 
 export interface ActivityLogAttributes {
     id: number;
@@ -60,8 +60,8 @@ ActivityLog.init(
     }
 );
 
-import { Task } from "./task";
-import { User } from "./user";
+import { Task } from "./task.js";
+import { User } from "./user.js";
 
 ActivityLog.belongsTo(Task, { foreignKey: "task_id", as: "task" });
 ActivityLog.belongsTo(User, { foreignKey: "user_id", as: "user" });

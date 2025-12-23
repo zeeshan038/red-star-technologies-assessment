@@ -1,7 +1,7 @@
-import { sequelize } from "../config/db";
-import { User } from "../models/user";
-import { Workspace } from "../models/workspace";
-import { Project } from "../models/projects";
+import { sequelize } from "../config/db.js";
+import { User } from "../models/user.js";
+import { Workspace } from "../models/workspace.js";
+import { Project } from "../models/projects.js";
 import bcrypt from "bcryptjs";
 
 const seed = async () => {

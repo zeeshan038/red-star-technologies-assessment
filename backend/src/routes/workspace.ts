@@ -7,8 +7,8 @@ import {
     deleteWorkspace,
     addMemberToWorkspace,
     getWorkspaceMembers
-} from "../controllers/workspace";
-import { verifyUser } from "../middlewares/verifyUser";
+} from "../controllers/workspace.js";
+import { verifyUser } from "../middlewares/verifyUser.js";
 
 const router = express.Router();
 
