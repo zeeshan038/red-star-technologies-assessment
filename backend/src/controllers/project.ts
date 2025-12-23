@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { projectSchema } from "../schema/Project";
-import { Project } from "../models/projects";
+import { projectRepo } from "../repositories/project.repository";
 
 
 /**
@@ -21,9 +21,9 @@ export const createProject = async (req: Request, res: Response) => {
     }
 
     try {
-        const project = await Project.create({
+        const project = await projectRepo.create({
             ...payload,
-            workspace_id: workspaceId,
+            workspace_id: Number(workspaceId),
         });
 
         return res.status(201).json({
@@ -47,11 +47,7 @@ export const createProject = async (req: Request, res: Response) => {
 export const getWorkspaceProjects = async (req: Request, res: Response) => {
     const { workspaceId } = req.params;
     try {
-        const projects = await Project.findAll({
-            where: {
-                workspace_id: workspaceId
-            }
-        });
+        const projects = await projectRepo.findByWorkspaceId(Number(workspaceId));
         return res.status(200).json({
             status: true,
             msg: "Projects fetched successfully",
@@ -73,11 +69,7 @@ export const getWorkspaceProjects = async (req: Request, res: Response) => {
 export const getProject = async (req: Request, res: Response) => {
     const { projectId } = req.params;
     try {
-        const project = await Project.findOne({
-            where: {
-                id: projectId
-            }
-        });
+        const project = await projectRepo.findById(Number(projectId));
         return res.status(200).json({
             status: true,
             msg: "Project fetched successfully",
@@ -99,15 +91,10 @@ export const getProject = async (req: Request, res: Response) => {
 export const deleteProject = async (req: Request, res: Response) => {
     const { projectId } = req.params;
     try {
-        const project = await Project.destroy({
-            where: {
-                id: projectId
-            }
-        });
+        await projectRepo.delete(Number(projectId));
         return res.status(200).json({
             status: true,
-            msg: "Project deleted successfully",
-            data: project
+            msg: "Project deleted successfully"
         });
     } catch (error: any) {
         return res.status(500).json({
@@ -116,5 +103,3 @@ export const deleteProject = async (req: Request, res: Response) => {
         });
     }
 };
-
-

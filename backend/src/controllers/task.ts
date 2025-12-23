@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import { taskSchema } from "../schema/Task";
-import { Task } from "../models/task";
-import { ActivityLog } from "../models/activityLogs";
+
+// Repositories
+import { taskRepo } from "../repositories/task.repository";
+import { activityLogRepo } from "../repositories/activityLog.repository";
 
 
 /**
@@ -22,7 +24,7 @@ export const createTask = async (req: Request, res: Response) => {
     }
 
     try {
-        const task = await Task.create({
+        const task = await taskRepo.create({
             ...payload,
             project_id: projectId,
         });
@@ -63,9 +65,7 @@ export const getTasks = async (req: Request, res: Response) => {
             whereClause.assigned_to = assigned_to;
         }
 
-        const tasks = await Task.findAll({
-            where: whereClause
-        });
+        const tasks = await taskRepo.findAll(whereClause);
 
         return res.status(200).json({
             status: true,
@@ -98,7 +98,7 @@ export const updateTask = async (req: Request, res: Response) => {
         });
     }
     try {
-        const task = await Task.findByPk(id);
+        const task = await taskRepo.findById(Number(id));
         if (!task) {
             return res.status(404).json({
                 status: false,
@@ -106,12 +106,15 @@ export const updateTask = async (req: Request, res: Response) => {
             });
         }
 
-        await task.update(payload);
+        await taskRepo.update(Number(id), payload);
+
+        // Fetch updated task to return
+        const updatedTask = await taskRepo.findById(Number(id));
 
         return res.status(200).json({
             status: true,
             msg: "Task updated successfully",
-            data: task
+            data: updatedTask
         });
     } catch (error: any) {
         return res.status(500).json({
@@ -130,7 +133,7 @@ export const deleteTask = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const task = await Task.findByPk(id);
+        const task = await taskRepo.findById(Number(id));
         if (!task) {
             return res.status(404).json({
                 status: false,
@@ -138,7 +141,7 @@ export const deleteTask = async (req: Request, res: Response) => {
             });
         }
 
-        await task.destroy();
+        await taskRepo.delete(Number(id));
 
         return res.status(200).json({
             status: true,
@@ -161,7 +164,7 @@ export const getTaskLogs = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const task = await Task.findByPk(id);
+        const task = await taskRepo.findById(Number(id));
         if (!task) {
             return res.status(404).json({
                 status: false,
@@ -169,11 +172,7 @@ export const getTaskLogs = async (req: Request, res: Response) => {
             });
         }
 
-        const logs = await ActivityLog.findAll({
-            where: {
-                task_id: id
-            }
-        });
+        const logs = await activityLogRepo.findByTaskId(Number(id));
 
         return res.status(200).json({
             status: true,
@@ -200,7 +199,7 @@ export const toggleTaskStatus = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const task = await Task.findByPk(id);
+        const task = await taskRepo.findById(Number(id));
         if (!task) {
             return res.status(404).json({
                 status: false,
@@ -208,14 +207,14 @@ export const toggleTaskStatus = async (req: Request, res: Response) => {
             });
         }
 
-        await task.update({
-            status: status
-        });
+        await taskRepo.update(Number(id), { status: status });
+
+        const updatedTask = await taskRepo.findById(Number(id));
 
         return res.status(200).json({
             status: true,
             msg: "Task status toggled successfully",
-            data: task
+            data: updatedTask
         });
     } catch (error: any) {
         return res.status(500).json({

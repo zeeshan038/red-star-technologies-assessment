@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
-import { Workspace } from "../models/workspace";
 import { workspaceSchema } from "../schema/Workspace";
-import { WorkspaceMember } from "../models/workspaceMembers";
-import { User } from "../models/user";
+
+// Repositories
+import { workspaceRepo } from "../repositories/workspace.repository";
+import { workspaceMemberRepo } from "../repositories/workspaceMember.repository";
+import { userRepo } from "../repositories/user.repository";
 
 /**
  * @Description Create a new workspace
@@ -22,13 +24,13 @@ export const createWorkspace = async (req: Request, res: Response) => {
     }
 
     try {
-        const workspace = await Workspace.create({
+        const workspace = await workspaceRepo.create({
             name: payload.name,
             created_by: userId!
         });
 
         // Add creator as an admin member by default
-        await WorkspaceMember.create({
+        await workspaceMemberRepo.create({
             workspace_id: workspace.id,
             user_id: userId!,
             role: "admin"
@@ -55,11 +57,7 @@ export const createWorkspace = async (req: Request, res: Response) => {
 export const getWorkspaces = async (req: Request, res: Response) => {
     const userId = req.user?.id;
     try {
-        const workspaces = await Workspace.findAll({
-            where: {
-                created_by: userId!
-            }
-        });
+        const workspaces = await workspaceRepo.findByCreator(userId!);
         return res.status(200).json({
             status: true,
             msg: "Workspaces fetched successfully",
@@ -83,12 +81,7 @@ export const getWorkspace = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const workspace = await Workspace.findOne({
-            where: {
-                id: id,
-                created_by: userId!
-            }
-        });
+        const workspace = await workspaceRepo.findByIdAndCreator(Number(id), userId!);
 
         if (!workspace) {
             return res.status(404).json({
@@ -129,12 +122,7 @@ export const updateWorkspace = async (req: Request, res: Response) => {
     }
 
     try {
-        const workspace = await Workspace.findOne({
-            where: {
-                id: id,
-                created_by: userId!
-            }
-        });
+        const workspace = await workspaceRepo.findByIdAndCreator(Number(id), userId!);
 
         if (!workspace) {
             return res.status(404).json({
@@ -143,8 +131,7 @@ export const updateWorkspace = async (req: Request, res: Response) => {
             });
         }
 
-        workspace.name = payload.name;
-        await workspace.save();
+        await workspaceRepo.update(workspace.id, { name: payload.name });
 
         return res.status(200).json({
             status: true,
@@ -169,12 +156,7 @@ export const deleteWorkspace = async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const workspace = await Workspace.findOne({
-            where: {
-                id: id,
-                created_by: userId!
-            }
-        });
+        const workspace = await workspaceRepo.findByIdAndCreator(Number(id), userId!);
 
         if (!workspace) {
             return res.status(404).json({
@@ -183,7 +165,7 @@ export const deleteWorkspace = async (req: Request, res: Response) => {
             });
         }
 
-        await workspace.destroy();
+        await workspaceRepo.delete(workspace.id);
 
         return res.status(200).json({
             status: true,
@@ -207,12 +189,7 @@ export const addMemberToWorkspace = async (req: Request, res: Response) => {
     const { workspaceId, memberId } = req.params;
 
     try {
-        const workspace = await Workspace.findOne({
-            where: {
-                id: workspaceId,
-                created_by: userId!
-            }
-        });
+        const workspace = await workspaceRepo.findByIdAndCreator(Number(workspaceId), userId!);
 
         if (!workspace) {
             return res.status(404).json({
@@ -220,7 +197,7 @@ export const addMemberToWorkspace = async (req: Request, res: Response) => {
                 msg: "Workspace not found or unauthorized"
             });
         }
-        const userToAdd = await User.findByPk(memberId);
+        const userToAdd = await userRepo.findById(Number(memberId));
         if (!userToAdd) {
             return res.status(404).json({
                 status: false,
@@ -228,12 +205,7 @@ export const addMemberToWorkspace = async (req: Request, res: Response) => {
             });
         }
 
-        const existingMember = await WorkspaceMember.findOne({
-            where: {
-                workspace_id: Number(workspaceId),
-                user_id: Number(memberId)
-            }
-        });
+        const existingMember = await workspaceMemberRepo.findOne(Number(workspaceId), Number(memberId));
 
         if (existingMember) {
             return res.status(400).json({
@@ -242,7 +214,7 @@ export const addMemberToWorkspace = async (req: Request, res: Response) => {
             });
         }
 
-        const workspaceMember = await WorkspaceMember.create({
+        const workspaceMember = await workspaceMemberRepo.create({
             workspace_id: Number(workspaceId),
             user_id: Number(memberId),
             role: "member"
@@ -270,11 +242,7 @@ export const getWorkspaceMembers = async (req: Request, res: Response) => {
     const { workspaceId } = req.params;
 
     try {
-        const workspace = await Workspace.findOne({
-            where: {
-                id: workspaceId
-            }
-        });
+        const workspace = await workspaceRepo.findById(Number(workspaceId));
 
         if (!workspace) {
             return res.status(404).json({
@@ -283,18 +251,7 @@ export const getWorkspaceMembers = async (req: Request, res: Response) => {
             });
         }
 
-        const members = await WorkspaceMember.findAll({
-            where: {
-                workspace_id: Number(workspaceId)
-            },
-            include: [
-                {
-                    model: User,
-                    as: "user",
-                    attributes: ["id", "name", "email"]
-                }
-            ]
-        });
+        const members = await workspaceMemberRepo.findByWorkspaceId(Number(workspaceId));
 
         return res.status(200).json({
             status: true,

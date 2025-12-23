@@ -3,6 +3,7 @@ dotenv.config();
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../models/user";
+import { userRepo } from "../repositories/user.repository";
 
 declare global {
     namespace Express {
@@ -50,7 +51,7 @@ export const verifyUser = async (
 
         const decoded = jwt.verify(token, secret) as JwtPayload;
 
-        const user = await User.findByPk(decoded.id);
+        const user = await userRepo.findById(decoded.id);
         if (!user) {
             return res.status(401).json({
                 status: false,

@@ -1,10 +1,9 @@
 //NPM Packages
 import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { Op } from "sequelize";
 
-//Models
-import { User } from "../models/user";
+//Repositories
+import { userRepo } from "../repositories/user.repository";
 
 //Schemas
 import { loginSchemma, userSchema } from "../schema/User";
@@ -29,7 +28,7 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     try {
-        const existingUser = await User.findOne({ where: { email: payload.email } });
+        const existingUser = await userRepo.findByEmail(payload.email);
         if (existingUser) {
             return res.status(400).json({
                 status: false,
@@ -40,7 +39,7 @@ export const registerUser = async (req: Request, res: Response) => {
         const salt = bcrypt.genSaltSync(10);
         const hashedPassword = bcrypt.hashSync(payload.password, salt);
 
-        const user = await User.create({
+        const user = await userRepo.create({
             name: payload.name,
             email: payload.email,
             password: hashedPassword
@@ -82,7 +81,7 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await User.findOne({ where: { email: payload.email } });
+        const user = await userRepo.findByEmail(payload.email);
         if (!user) {
             return res.status(400).json({
                 status: false,
@@ -132,16 +131,7 @@ export const searchUsers = async (req: Request, res: Response) => {
     }
 
     try {
-        const users = await User.findAll({
-            where: {
-                [Op.or]: [
-                    { name: { [Op.like]: `%${query}%` } },
-                    { email: { [Op.like]: `%${query}%` } }
-                ]
-            },
-            attributes: ['id', 'name', 'email'],
-            limit: 10
-        });
+        const users = await userRepo.search(query as string);
 
         return res.status(200).json({
             status: true,
