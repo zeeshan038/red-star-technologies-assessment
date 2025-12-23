@@ -1,0 +1,226 @@
+import { Request, Response } from "express";
+import { taskSchema } from "../schema/Task";
+import { Task } from "../models/task";
+import { ActivityLog } from "../models/activityLogs";
+
+
+/**
+ * @Description Create a new task
+ * @Route POST /api/task/create
+ * @Access Private
+ */
+export const createTask = async (req: Request, res: Response) => {
+    const { projectId } = req.params;
+    const payload = req.body;
+
+    const result = taskSchema(payload);
+    if (result.error) {
+        return res.status(400).json({
+            status: false,
+            msg: result.error.details[0].message
+        });
+    }
+
+    try {
+        const task = await Task.create({
+            ...payload,
+            project_id: projectId,
+        });
+
+        return res.status(201).json({
+            status: true,
+            msg: "Task created successfully",
+            data: task
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
+
+/**
+ * @Description Get tasks with optional filters
+ * @Route GET /api/task/all
+ * @Access Private
+ */
+export const getTasks = async (req: Request, res: Response) => {
+    const { projectId, status, assigned_to } = req.query;
+
+    try {
+        const whereClause: any = {};
+
+        if (projectId) {
+            whereClause.project_id = projectId;
+        }
+
+        if (status) {
+            whereClause.status = status;
+        }
+
+        if (assigned_to) {
+            whereClause.assigned_to = assigned_to;
+        }
+
+        const tasks = await Task.findAll({
+            where: whereClause
+        });
+
+        return res.status(200).json({
+            status: true,
+            msg: "Tasks fetched successfully",
+            data: tasks
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
+
+
+/**
+ * @Description Update a task
+ * @Route PATCH /api/task/:id
+ * @Access Private
+ */
+export const updateTask = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const payload = req.body;
+
+    const result = taskSchema(payload);
+    if (result.error) {
+        return res.status(400).json({
+            status: false,
+            msg: result.error.details[0].message
+        });
+    }
+    try {
+        const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                status: false,
+                msg: "Task not found"
+            });
+        }
+
+        await task.update(payload);
+
+        return res.status(200).json({
+            status: true,
+            msg: "Task updated successfully",
+            data: task
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
+
+/**
+ * @Description Delete a task
+ * @Route DELETE /api/task/:id
+ * @Access Private
+ */
+export const deleteTask = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                status: false,
+                msg: "Task not found"
+            });
+        }
+
+        await task.destroy();
+
+        return res.status(200).json({
+            status: true,
+            msg: "Task deleted successfully"
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
+
+/**
+ * @Description task logs
+ * @Route GET /api/task/logs/:id
+ * @Access Private
+ */
+export const getTaskLogs = async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                status: false,
+                msg: "Task not found"
+            });
+        }
+
+        const logs = await ActivityLog.findAll({
+            where: {
+                task_id: id
+            }
+        });
+
+        return res.status(200).json({
+            status: true,
+            msg: "Task logs fetched successfully",
+            data: logs
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
+
+
+/**
+ * @Description toggle task status
+ * @Route PATCH /api/task/:id
+ * @Access Private
+ */
+export const toggleTaskStatus = async (req: Request, res: Response) => {
+    const { status } = req.body;
+    console.log("status", status)
+    const { id } = req.params;
+
+    try {
+        const task = await Task.findByPk(id);
+        if (!task) {
+            return res.status(404).json({
+                status: false,
+                msg: "Task not found"
+            });
+        }
+
+        await task.update({
+            status: status
+        });
+
+        return res.status(200).json({
+            status: true,
+            msg: "Task status toggled successfully",
+            data: task
+        });
+    } catch (error: any) {
+        return res.status(500).json({
+            status: false,
+            msg: error.message
+        });
+    }
+};
