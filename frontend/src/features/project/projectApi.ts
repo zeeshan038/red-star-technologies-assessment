@@ -25,12 +25,26 @@ export const projectApi = apiSlice.injectEndpoints({
             }),
             providesTags: ["Project"],
         }),
+        getProjectAnalytics: builder.query({
+            query: (projectId) => ({
+                url: `${project_url}/analytics/${projectId}`,
+                method: "GET",
+            }),
+            providesTags: ["Project"],
+        }),
         deleteProject: builder.mutation({
             query: (projectId) => ({
                 url: `${project_url}/delete/${projectId}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Project"],
+        }),
+        getActivityLogs: builder.query({
+            query: (id) => ({
+                url: `${project_url}/analytics/${id}`,
+                method: "GET",
+            }),
+            providesTags: ["Project"],
         }),
     }),
 });
@@ -40,4 +54,6 @@ export const {
     useGetWorkspaceProjectsQuery,
     useDeleteProjectMutation,
     useGetSpecificProjectQuery,
+    useGetProjectAnalyticsQuery,
+    useGetActivityLogsQuery,
 } = projectApi;

@@ -9,23 +9,18 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import {
     Loader2,
     LayoutGrid,
-    List,
-    LayoutList,
-    Filter,
-    ArrowUpDown,
     Plus,
     MessageSquare,
     Home,
     ChevronRight,
-    Settings,
-    Share2,
-    Download
+    BarChart3,
 } from "lucide-react";
 
 type ViewMode = "board" | "list" | "overview";
 
 import CreateTaskModal from "@/components/dashboard/CreateTaskModal";
 import TaskDetailsSidebar from "@/components/dashboard/TaskDetailsSidebar";
+import { ProjectOverview } from "./ProjectOverview";
 
 const ItemTypes = {
     TASK: 'task'
@@ -40,7 +35,7 @@ export default function ProjectDetailsPage() {
     const { data: projectData, isLoading, isError } = useGetSpecificProjectQuery(projectId, {
         skip: !projectId
     });
-    const [viewMode, setViewMode] = useState<ViewMode>("board");
+    const [viewMode, setViewMode] = useState<ViewMode>("overview");
     const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
     const [createTaskDefaultStatus, setCreateTaskDefaultStatus] = useState<"TODO" | "IN_PROGRESS" | "DONE">("TODO");
     const [selectedTask, setSelectedTask] = useState<any>(null);
@@ -126,6 +121,15 @@ export default function ProjectDetailsPage() {
                 <div className="flex flex-col sm:flex-row items-center justify-between border-b border-gray-100 mb-8">
                     <div className="flex items-center gap-6 lg:gap-8 w-full sm:w-auto overflow-x-auto no-scrollbar">
                         <button
+                            onClick={() => setViewMode("overview")}
+                            className={`flex items-center gap-2 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${viewMode === "overview"
+                                ? "border-[#5453E8] text-[#5453E8]"
+                                : "border-transparent text-gray-500 hover:text-gray-800"
+                                }`}
+                        >
+                            <BarChart3 size={18} /> Overview
+                        </button>
+                        <button
                             onClick={() => setViewMode("board")}
                             className={`flex items-center gap-2 py-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap ${viewMode === "board"
                                 ? "border-[#5453E8] text-[#5453E8]"
@@ -138,7 +142,9 @@ export default function ProjectDetailsPage() {
                 </div>
 
                 {/* Content Area */}
-                {viewMode === "board" ? (
+                {viewMode === "overview" ? (
+                    <ProjectOverview projectId={projectId} />
+                ) : viewMode === "board" ? (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
                         <TaskColumn
                             title="To Do"
@@ -173,9 +179,10 @@ export default function ProjectDetailsPage() {
                     </div>
                 ) : (
                     <div className="bg-white rounded-3xl p-10 border border-gray-100 text-center text-gray-500">
-                        <p>List View is under construction. Please switch to Board View.</p>
+                        <p>View is under construction. Please switch to Board or Overview.</p>
                     </div>
                 )}
+
 
                 <CreateTaskModal
                     isOpen={isCreateTaskModalOpen}

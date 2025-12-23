@@ -193,6 +193,10 @@ __turbopack_context__.s([
     ()=>useCreateProjectMutation,
     "useDeleteProjectMutation",
     ()=>useDeleteProjectMutation,
+    "useGetActivityLogsQuery",
+    ()=>useGetActivityLogsQuery,
+    "useGetProjectAnalyticsQuery",
+    ()=>useGetProjectAnalyticsQuery,
     "useGetSpecificProjectQuery",
     ()=>useGetSpecificProjectQuery,
     "useGetWorkspaceProjectsQuery",
@@ -232,6 +236,15 @@ const projectApi = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$featur
                     "Project"
                 ]
             }),
+            getProjectAnalytics: builder.query({
+                query: (projectId)=>({
+                        url: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["project_url"]}/analytics/${projectId}`,
+                        method: "GET"
+                    }),
+                providesTags: [
+                    "Project"
+                ]
+            }),
             deleteProject: builder.mutation({
                 query: (projectId)=>({
                         url: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["project_url"]}/delete/${projectId}`,
@@ -240,10 +253,19 @@ const projectApi = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$featur
                 invalidatesTags: [
                     "Project"
                 ]
+            }),
+            getActivityLogs: builder.query({
+                query: (id)=>({
+                        url: `${__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$config$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["project_url"]}/analytics/${id}`,
+                        method: "GET"
+                    }),
+                providesTags: [
+                    "Project"
+                ]
             })
         })
 });
-const { useCreateProjectMutation, useGetWorkspaceProjectsQuery, useDeleteProjectMutation, useGetSpecificProjectQuery } = projectApi;
+const { useCreateProjectMutation, useGetWorkspaceProjectsQuery, useDeleteProjectMutation, useGetSpecificProjectQuery, useGetProjectAnalyticsQuery, useGetActivityLogsQuery } = projectApi;
 }),
 "[externals]/next/dist/server/app-render/action-async-storage.external.js [external] (next/dist/server/app-render/action-async-storage.external.js, cjs)", ((__turbopack_context__, module, exports) => {
 

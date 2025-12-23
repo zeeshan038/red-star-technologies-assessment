@@ -22,6 +22,7 @@ interface SidebarProps {
     setActiveTab: (tab: string) => void;
     isOpen: boolean;
     onClose: () => void;
+    workspaceId: string | null;
     activeProjectId?: string | null;
 }
 
