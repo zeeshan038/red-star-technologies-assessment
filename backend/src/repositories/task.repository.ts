@@ -29,6 +29,38 @@ export class TaskRepository {
         return task.update(data);
     }
 
+    async getTaskStatsByProject(project_id: number) {
+        const tasks = await Task.findAll({
+            where: { project_id },
+            attributes: ['status', 'priority']
+        });
+
+        const stats = {
+            totalTasks: tasks.length,
+            statusCounts: {
+                TODO: 0,
+                IN_PROGRESS: 0,
+                DONE: 0
+            },
+            priorityCounts: {
+                LOW: 0,
+                MEDIUM: 0,
+                HIGH: 0
+            }
+        };
+
+        tasks.forEach(task => {
+            if (stats.statusCounts[task.status] !== undefined) {
+                stats.statusCounts[task.status]++;
+            }
+            if (stats.priorityCounts[task.priority] !== undefined) {
+                stats.priorityCounts[task.priority]++;
+            }
+        });
+
+        return stats;
+    }
+
     async delete(id: number) {
         return Task.destroy({ where: { id } });
     }

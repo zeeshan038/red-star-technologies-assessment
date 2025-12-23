@@ -59,3 +59,9 @@ ActivityLog.init(
         timestamps: true
     }
 );
+
+import { Task } from "./task";
+import { User } from "./user";
+
+ActivityLog.belongsTo(Task, { foreignKey: "task_id", as: "task" });
+ActivityLog.belongsTo(User, { foreignKey: "user_id", as: "user" });

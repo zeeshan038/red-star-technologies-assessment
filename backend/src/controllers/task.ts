@@ -26,7 +26,14 @@ export const createTask = async (req: Request, res: Response) => {
     try {
         const task = await taskRepo.create({
             ...payload,
-            project_id: projectId,
+            project_id: Number(projectId),
+        });
+
+        // Log activity
+        await activityLogRepo.create({
+            task_id: task.id,
+            user_id: Number(req.user?.id),
+            action: "CREATED"
         });
 
         return res.status(201).json({
@@ -108,6 +115,20 @@ export const updateTask = async (req: Request, res: Response) => {
 
         await taskRepo.update(Number(id), payload);
 
+        // Log activity
+        let action = "UPDATED";
+        if (payload.assigned_to) {
+            action = "ASSIGNED";
+        } else if (payload.status) {
+            action = `STATUS_CHANGED_${payload.status}`;
+        }
+
+        await activityLogRepo.create({
+            task_id: Number(id),
+            user_id: Number(req.user?.id),
+            action: action
+        });
+
         // Fetch updated task to return
         const updatedTask = await taskRepo.findById(Number(id));
 
@@ -142,6 +163,13 @@ export const deleteTask = async (req: Request, res: Response) => {
         }
 
         await taskRepo.delete(Number(id));
+
+        // Log activity
+        await activityLogRepo.create({
+            task_id: Number(id),
+            user_id: Number(req.user?.id),
+            action: "DELETED"
+        });
 
         return res.status(200).json({
             status: true,
@@ -208,6 +236,13 @@ export const toggleTaskStatus = async (req: Request, res: Response) => {
         }
 
         await taskRepo.update(Number(id), { status: status });
+
+        // Log activity
+        await activityLogRepo.create({
+            task_id: Number(id),
+            user_id: Number(req.user?.id),
+            action: `STATUS_CHANGED_${status}`
+        });
 
         const updatedTask = await taskRepo.findById(Number(id));
 
