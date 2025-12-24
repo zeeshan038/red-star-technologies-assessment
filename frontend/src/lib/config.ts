@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = "https://red-star-technologies-assessment-backend.onrender.com";
 
 export const user_url = '/api/user';
 export const workspace_url = '/api/workspace';
