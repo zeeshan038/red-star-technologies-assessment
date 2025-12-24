@@ -7,7 +7,10 @@ import router from './routes/index.js'
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: "https://red-star-technologies-assessment.vercel.app",
+    credentials: true,
+}));
 app.use(express.json());
 
 // Call database connection
